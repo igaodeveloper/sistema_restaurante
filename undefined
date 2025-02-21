@@ -1,0 +1,9 @@
+import RootLayout from "@/components/layout/root-layout";
+
+export default function LayoutPreview() {
+  return (
+    <div className="w-full h-full bg-background">
+      <RootLayout />
+    </div>
+  );
+}
