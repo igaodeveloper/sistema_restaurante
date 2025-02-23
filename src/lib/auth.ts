@@ -7,30 +7,28 @@ export async function signUp({
   email,
   password,
   name,
-  role = "staff",
+  phone,
+  role = "customer",
 }: {
   email: string;
   password: string;
   name: string;
+  phone?: string;
   role?: User["role"];
 }) {
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      data: {
+        name,
+        phone,
+        role,
+      },
+    },
   });
 
   if (authError) throw authError;
-
-  if (authData.user) {
-    const { error: userError } = await supabase.from("users").insert({
-      id: authData.user.id,
-      email,
-      name,
-      role,
-    });
-
-    if (userError) throw userError;
-  }
 
   return authData;
 }
@@ -45,6 +43,23 @@ export async function signIn({
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
+  });
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
+    },
   });
 
   if (error) throw error;

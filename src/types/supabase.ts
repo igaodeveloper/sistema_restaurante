@@ -9,83 +9,130 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      orders: {
-        Row: {
-          id: string;
-          user_id: string | null;
-          table_id: string;
-          status: "em_andamento" | "pronto" | "entregue" | "cancelado";
-          total: number;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id?: string | null;
-          table_id: string;
-          status?: "em_andamento" | "pronto" | "entregue" | "cancelado";
-          total?: number;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string | null;
-          table_id?: string;
-          status?: "em_andamento" | "pronto" | "entregue" | "cancelado";
-          total?: number;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      order_items: {
-        Row: {
-          id: string;
-          order_id: string;
-          menu_item_id: string;
-          quantity: number;
-          subtotal: number;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          order_id: string;
-          menu_item_id: string;
-          quantity: number;
-          subtotal: number;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          order_id?: string;
-          menu_item_id?: string;
-          quantity?: number;
-          subtotal?: number;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      menu_items: {
+      products: {
         Row: {
           id: string;
           name: string;
           description: string;
           price: number;
-          category: string;
+          category: "burger" | "drink" | "dessert" | "side" | "combo";
           image_url: string;
-          active: boolean;
+          ingredients: string[];
+          allergens: string[];
+          nutritional_info: Json;
+          preparation_time: number;
+          is_available: boolean;
+          is_featured: boolean;
+          discount_percentage?: number;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
           name: string;
           description: string;
           price: number;
-          category: string;
+          category: "burger" | "drink" | "dessert" | "side" | "combo";
           image_url: string;
-          active?: boolean;
+          ingredients: string[];
+          allergens?: string[];
+          nutritional_info?: Json;
+          preparation_time?: number;
+          is_available?: boolean;
+          is_featured?: boolean;
+          discount_percentage?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          description?: string;
+          price?: number;
+          category?: "burger" | "drink" | "dessert" | "side" | "combo";
+          image_url?: string;
+          ingredients?: string[];
+          allergens?: string[];
+          nutritional_info?: Json;
+          preparation_time?: number;
+          is_available?: boolean;
+          is_featured?: boolean;
+          discount_percentage?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      product_variations: {
+        Row: {
+          id: string;
+          product_id: string;
+          name: string;
+          price_adjustment: number;
+          is_available: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          name: string;
+          price_adjustment: number;
+          is_available?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          product_id?: string;
+          name?: string;
+          price_adjustment?: number;
+          is_available?: boolean;
+          created_at?: string;
+        };
+      };
+      product_extras: {
+        Row: {
+          id: string;
+          name: string;
+          price: number;
+          category: string;
+          is_available: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          price: number;
+          category: string;
+          is_available?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          price?: number;
+          category?: string;
+          is_available?: boolean;
+          created_at?: string;
+        };
+      };
+      combos: {
+        Row: {
+          id: string;
+          name: string;
+          description: string;
+          price: number;
+          products: string[];
+          discount_percentage: number;
+          is_available: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          description: string;
+          price: number;
+          products: string[];
+          discount_percentage: number;
+          is_available?: boolean;
           created_at?: string;
         };
         Update: {
@@ -93,32 +140,9 @@ export interface Database {
           name?: string;
           description?: string;
           price?: number;
-          category?: string;
-          image_url?: string;
-          active?: boolean;
-          created_at?: string;
-        };
-      };
-      users: {
-        Row: {
-          id: string;
-          email: string;
-          name: string;
-          role: "admin" | "staff" | "kitchen";
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          email: string;
-          name: string;
-          role?: "admin" | "staff" | "kitchen";
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          email?: string;
-          name?: string;
-          role?: "admin" | "staff" | "kitchen";
+          products?: string[];
+          discount_percentage?: number;
+          is_available?: boolean;
           created_at?: string;
         };
       };
