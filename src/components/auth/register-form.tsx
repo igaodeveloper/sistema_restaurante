@@ -85,6 +85,13 @@ export default function RegisterForm({ onStepChange }: RegisterFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validação do telefone
+    const phoneRegex = /^(\(\d{2}\) \d{5}-\d{4}|\d{11})$/;
+    if (!phoneRegex.test(formData.phone)) {
+      notify("order-status", "Erro", "Telefone inválido. Use o formato (11) 99999-9999 ou 99999999999.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       notify("order-status", "Erro", "As senhas não coincidem");
       return;

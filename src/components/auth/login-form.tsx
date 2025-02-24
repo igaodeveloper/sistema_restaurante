@@ -26,11 +26,15 @@ export default function LoginForm() {
     e.preventDefault();
     setIsLoading(true);
 
+    console.log('Attempting to sign in with:', { email, password });
     try {
+      console.log('Email and password being sent to signIn:', { email, password });
       await signIn({ email, password });
+      console.log('signIn successful');
       notify("order-status", "Login realizado com sucesso!");
       navigate("/");
     } catch (error) {
+      console.error('Sign in error:', error);
       notify(
         "order-status",
         "Erro ao fazer login",
@@ -43,9 +47,10 @@ export default function LoginForm() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const { error } = await signInWithGoogle();
-      if (error) throw error;
-
+      const result = await signInWithGoogle();
+      if ('error' in result) {
+        throw result.error;
+      }
       // The user will be redirected to Google's login page
       // After successful login, they'll be redirected back to our callback URL
     } catch (error) {
