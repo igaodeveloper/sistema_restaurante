@@ -1,37 +1,57 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  useRoutes as useTempoRoutes,
-} from "react-router-dom";
+import { lazy } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/auth-context";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import RootLayout from "@/components/layout/root-layout";
-import LoginPage from "@/pages/auth/login";
-import RegisterPage from "@/pages/auth/register";
-import DashboardPage from "@/pages/dashboard";
-import MenuPage from "@/pages/menu";
-import KitchenPage from "@/pages/kitchen";
-import OrderPage from "@/pages/orders/[id]";
-import PaymentPage from "@/pages/orders/payment/[id]";
-import TablesPage from "@/pages/tables";
-import ReportsPage from "@/pages/reports";
-import routes from "tempo-routes";
 
-// Componente que gerencia as rotas dinâmicas do "tempo-routes"
-function TempoRoutes() {
-  return import.meta.env.VITE_TEMPO === "true" ? useTempoRoutes(routes) : null;
-}
+// Lazy loaded components
+const LoginPage = lazy(() => import("@/pages/auth/login"));
+const RegisterPage = lazy(() => import("@/pages/auth/register"));
+const DashboardPage = lazy(() => import("@/pages/dashboard"));
+const MenuPage = lazy(() => import("@/pages/menu"));
+const KitchenPage = lazy(() => import("@/pages/kitchen"));
+const OrderPage = lazy(() => import("@/pages/orders/[id]"));
+const PaymentPage = lazy(() => import("@/pages/orders/payment/[id]"));
+const TablesPage = lazy(() => import("@/pages/tables"));
+const ReportsPage = lazy(() => import("@/pages/reports"));
+const ProfilePage = lazy(() => import("@/pages/profile"));
+const SettingsPage = lazy(() => import("@/pages/settings"));
+const ResetPasswordPage = lazy(() => import("@/pages/auth/reset-password"));
+const ErrorPage = lazy(() => import("@/pages/error"));
 
-// Configuração das rotas principais da aplicação
+// Route configurations
+const routes = {
+  auth: {
+    login: "/login",
+    register: "/registro",
+    resetPassword: "/recuperar-senha",
+    verifyEmail: "/verificar-email",
+  },
+  app: {
+    home: "/",
+    dashboard: "/dashboard",
+    menu: "/cardapio",
+    kitchen: "/cozinha",
+    tables: "/mesas",
+    orders: "/comandas",
+    reports: "/relatorios",
+    profile: "/perfil",
+    settings: "/configuracoes",
+  },
+};
+
+// Wrap element with AuthProvider
+const withAuth = (element: React.ReactNode) => (
+  <AuthProvider>{element}</AuthProvider>
+);
+
+// Router configuration
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
+    element: withAuth(<RootLayout />),
+    errorElement: <ErrorPage />,
     children: [
-      // Rotas dinâmicas da plataforma "tempo"
-      {
-        path: "tempobook/*",
-        element: <TempoRoutes />,
-      },
       {
         index: true,
         element: (
@@ -41,7 +61,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "cardapio",
+        path: routes.app.menu,
         element: (
           <AuthGuard>
             <MenuPage />
@@ -49,7 +69,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "cozinha",
+        path: routes.app.kitchen,
         element: (
           <AuthGuard allowedRoles={["admin", "kitchen"]}>
             <KitchenPage />
@@ -57,7 +77,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "mesas",
+        path: routes.app.tables,
         element: (
           <AuthGuard allowedRoles={["admin", "staff"]}>
             <TablesPage />
@@ -65,7 +85,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "comandas/:id",
+        path: `${routes.app.orders}/:id`,
         element: (
           <AuthGuard allowedRoles={["admin", "staff"]}>
             <OrderPage />
@@ -73,7 +93,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "comandas/:id/pagamento",
+        path: `${routes.app.orders}/:id/pagamento`,
         element: (
           <AuthGuard allowedRoles={["admin", "staff"]}>
             <PaymentPage />
@@ -81,25 +101,48 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "relatorios",
+        path: routes.app.reports,
         element: (
           <AuthGuard allowedRoles={["admin"]}>
             <ReportsPage />
           </AuthGuard>
         ),
       },
+      {
+        path: routes.app.profile,
+        element: (
+          <AuthGuard>
+            <ProfilePage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: routes.app.settings,
+        element: (
+          <AuthGuard>
+            <SettingsPage />
+          </AuthGuard>
+        ),
+      },
     ],
   },
   {
-    path: "login",
-    element: <LoginPage />,
+    path: routes.auth.login,
+    element: withAuth(<LoginPage />),
   },
   {
-    path: "registro",
-    element: <RegisterPage />,
+    path: routes.auth.register,
+    element: withAuth(<RegisterPage />),
+  },
+  {
+    path: routes.auth.resetPassword,
+    element: withAuth(<ResetPasswordPage />),
   },
   {
     path: "*",
-    element: <Navigate to="/" replace />,
+    element: <Navigate to={routes.auth.login} replace />,
   },
 ]);
+
+// Export routes configuration for use in components
+export { routes };

@@ -1,14 +1,9 @@
 import { Suspense } from "react";
-import { RouterProvider, useRoutes } from "react-router-dom"; // Correção: Importando useRoutes
+import { RouterProvider } from "react-router-dom";
 import { Toaster } from "sonner";
-import { AuthProvider } from "@/contexts/auth-context";
 import { router } from "@/routes";
-import routes from "tempo-routes";
 
 function App() {
-  const tempoRoutes =
-    import.meta.env.VITE_TEMPO === "true" ? useRoutes(routes) : null;
-
   return (
     <Suspense
       fallback={
@@ -20,25 +15,20 @@ function App() {
         </div>
       }
     >
-      <AuthProvider>
-        <Toaster
-          position="top-right"
-          richColors
-          expand={true}
-          toastOptions={{
-            className: "rounded-lg shadow-lg",
-            style: {
-              background: "var(--background)",
-              color: "var(--foreground)",
-              border: "1px solid var(--border)",
-            },
-          }}
-        />
-        <RouterProvider router={router} />
-
-        {/* Tempo Routes */}
-        {tempoRoutes}
-      </AuthProvider>
+      <Toaster
+        position="top-right"
+        richColors
+        expand={true}
+        toastOptions={{
+          className: "rounded-lg shadow-lg",
+          style: {
+            background: "var(--background)",
+            color: "var(--foreground)",
+            border: "1px solid var(--border)",
+          },
+        }}
+      />
+      <RouterProvider router={router} />
     </Suspense>
   );
 }
